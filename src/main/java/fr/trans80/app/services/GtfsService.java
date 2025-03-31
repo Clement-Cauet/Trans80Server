@@ -5,11 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import org.onebusaway.csv_entities.EntityHandler;
 import org.onebusaway.gtfs.impl.GtfsDaoImpl;
-import org.onebusaway.gtfs.model.Agency;
-import org.onebusaway.gtfs.model.ServiceCalendar;
-import org.onebusaway.gtfs.model.Route;
-import org.onebusaway.gtfs.model.Stop;
-import org.onebusaway.gtfs.model.Trip;
+import org.onebusaway.gtfs.model.*;
 import org.onebusaway.gtfs.serialization.GtfsReader;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +24,7 @@ public class GtfsService {
     public List<ServiceCalendar> calendarCache = new ArrayList<>();
     public List<Route> routeCache = new ArrayList<>();
     public List<Stop> stopCache = new ArrayList<>();
+    public List<StopTime> stopTimeCache = new ArrayList<>();
     public List<Trip> tripCache = new ArrayList<>();
 
     @PostConstruct
@@ -71,6 +68,7 @@ public class GtfsService {
         this.calendarCache = store.getAllCalendars().stream().toList();
         this.routeCache = store.getAllRoutes().stream().toList();
         this.stopCache = store.getAllStops().stream().toList();
+        this.stopTimeCache = store.getAllStopTimes().stream().toList();
         this.tripCache = store.getAllTrips().stream().toList();
     }
 
