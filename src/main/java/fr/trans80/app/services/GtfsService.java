@@ -1,34 +1,31 @@
 package fr.trans80.app.services;
 
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import org.onebusaway.csv_entities.EntityHandler;
 import org.onebusaway.gtfs.impl.GtfsDaoImpl;
-import org.onebusaway.gtfs.model.*;
 import org.onebusaway.gtfs.serialization.GtfsReader;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j
+@Getter
+@Setter
 public class GtfsService {
     private static final String GTFS_URL = "https://sig.hautsdefrance.fr/ext/opendata/Transport/GTFS/80/RHDF_GTFS_COM_80.zip";
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
-    public List<Agency> agencyCache = new ArrayList<>();
-    public List<ServiceCalendar> calendarCache = new ArrayList<>();
-    public List<Route> routeCache = new ArrayList<>();
-    public List<Stop> stopCache = new ArrayList<>();
-    public List<StopTime> stopTimeCache = new ArrayList<>();
-    public List<Trip> tripCache = new ArrayList<>();
+    private GtfsDaoImpl gtfsDao;
 
     @PostConstruct
     private void init()  throws Exception {
+        this.gtfsDao = new GtfsDaoImpl();
         this.processGtfsData();
     }
 
@@ -56,20 +53,9 @@ public class GtfsService {
     private void readGtfsData(File extractedDir) throws IOException {
         GtfsReader reader = new GtfsReader();
         reader.setInputLocation(extractedDir);
-
         reader.addEntityHandler(new GtfsEntityHandler());
-
-        GtfsDaoImpl store = new GtfsDaoImpl();
-        reader.setEntityStore(store);
-
+        reader.setEntityStore(this.gtfsDao);
         reader.run();
-
-        this.agencyCache = store.getAllAgencies().stream().toList();
-        this.calendarCache = store.getAllCalendars().stream().toList();
-        this.routeCache = store.getAllRoutes().stream().toList();
-        this.stopCache = store.getAllStops().stream().toList();
-        this.stopTimeCache = store.getAllStopTimes().stream().toList();
-        this.tripCache = store.getAllTrips().stream().toList();
     }
 
     private static class GtfsEntityHandler implements EntityHandler {

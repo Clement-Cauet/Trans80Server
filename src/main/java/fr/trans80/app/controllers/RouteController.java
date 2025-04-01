@@ -19,12 +19,12 @@ public class RouteController {
 
     @GetMapping
     public List<Route> getAllRoutes() {
-        return this.service.routeCache;
+        return this.service.getGtfsDao().getAllRoutes().stream().toList();
     }
 
     @GetMapping("/{id}")
     public Route getRouteById(@PathVariable String id) {
-        return this.service.routeCache.stream()
+        return this.getAllRoutes().stream()
                 .filter(route -> route.getId().getId().equals(id))
                 .findFirst()
                 .orElse(null);

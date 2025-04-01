@@ -18,6 +18,6 @@ public class CalendarController {
 
     @GetMapping
     public List<ServiceCalendar> getAllCalendars() {
-        return this.service.calendarCache;
+        return this.service.getGtfsDao().getAllCalendars().stream().toList();
     }
 }

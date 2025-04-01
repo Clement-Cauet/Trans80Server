@@ -18,6 +18,6 @@ public class AgencyController {
 
     @GetMapping
     public List<Agency> getAllAgencies() {
-        return this.service.agencyCache;
+        return this.service.getGtfsDao().getAllAgencies().stream().toList();
     }
 }

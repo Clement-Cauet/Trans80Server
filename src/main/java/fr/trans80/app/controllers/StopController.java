@@ -18,6 +18,6 @@ public class StopController {
 
     @GetMapping
     public List<Stop> getAllStops() {
-        return this.service.stopCache;
+        return this.service.getGtfsDao().getAllStops().stream().toList();
     }
 }
