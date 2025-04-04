@@ -20,4 +20,12 @@ public class StopController {
     public List<Stop> getAllStops() {
         return this.service.getGtfsDao().getAllStops().stream().toList();
     }
+
+    @GetMapping("/{id}")
+    public Stop getStopById(String id) {
+        return this.getAllStops().stream()
+                .filter(stop -> stop.getId().getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 }

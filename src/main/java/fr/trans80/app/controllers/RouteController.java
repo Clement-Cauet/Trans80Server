@@ -23,9 +23,9 @@ public class RouteController {
     }
 
     @GetMapping("/{id}")
-    public Route getRouteById(@PathVariable String id) {
+    public Route getRouteById(@PathVariable String routeId) {
         return this.getAllRoutes().stream()
-                .filter(route -> route.getId().getId().equals(id))
+                .filter(route -> route.getId().getId().equals(routeId))
                 .findFirst()
                 .orElse(null);
     }
