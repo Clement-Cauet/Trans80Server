@@ -23,9 +23,10 @@ public class CalendarController {
     }
 
     @GetMapping("/{serviceId}")
-    public List<ServiceCalendar> getCalendarByServiceId(@PathVariable String serviceId) {
+    public ServiceCalendar getCalendarByServiceId(@PathVariable String serviceId) {
         return this.getAllCalendars().stream()
                 .filter(calendar -> calendar.getServiceId().getId().equals(serviceId))
-                .toList();
+                .findFirst()
+                .orElse(null);
     }
 }

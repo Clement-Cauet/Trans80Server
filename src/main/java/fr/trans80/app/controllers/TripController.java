@@ -1,5 +1,6 @@
 package fr.trans80.app.controllers;
 
+import fr.trans80.app.services.DateService;
 import fr.trans80.app.services.GtfsService;
 import lombok.RequiredArgsConstructor;
 import org.onebusaway.gtfs.model.Trip;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class TripController {
 
     private final GtfsService service;
+    private final CalendarController calendarController;
 
     @GetMapping
     public List<Trip> getAllTrips() {
@@ -40,6 +41,7 @@ public class TripController {
         return this.service.getGtfsDao().getAllTrips().stream()
                 .filter(trip -> trip.getRoute().getId().getId().equals(routeId))
                 .filter(trip -> directionId == null || trip.getDirectionId().equals(directionId))
+                .filter(trip -> new DateService(calendarController).isDateTrip(date, trip.getServiceId().getId()))
                 .collect(Collectors.toList());
     }
 

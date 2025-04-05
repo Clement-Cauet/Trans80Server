@@ -21,10 +21,10 @@ public class StopController {
         return this.service.getGtfsDao().getAllStops().stream().toList();
     }
 
-    @GetMapping("/{id}")
-    public Stop getStopById(String id) {
+    @GetMapping("/{stopId}")
+    public Stop getStopById(String stopId) {
         return this.getAllStops().stream()
-                .filter(stop -> stop.getId().getId().equals(id))
+                .filter(stop -> stop.getId().getId().equals(stopId))
                 .findFirst()
                 .orElse(null);
     }
