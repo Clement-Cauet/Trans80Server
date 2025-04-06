@@ -16,15 +16,13 @@ public class StopTimeController {
     private final GtfsService service;
 
     @GetMapping
-    public List<StopTime> getAllStopTimes() {
-        return this.service.getGtfsDao().getAllStopTimes().stream().toList();
-    }
+    public List<StopTime> getStopTimes(
+            @RequestParam(value = "tripId", required = false) String tripId,
+            @RequestParam(value = "stopId", required = false) String stopId) {
 
-    @GetMapping("/{tripId}")
-    public List<StopTime> getStopTimesByTripId(@PathVariable String tripId) {
-
-        return this.getAllStopTimes().stream()
-                .filter(stopTime -> stopTime.getTrip().getId().getId().equals(tripId))
+        return this.service.getGtfsDao().getAllStopTimes().stream()
+                .filter(stopTime -> tripId == null || stopTime.getTrip().getId().getId().equals(tripId))
+                .filter(stopTime -> stopId == null || stopTime.getStop().getId().getId().equals(stopId))
                 .collect(Collectors.toList());
     }
 }
