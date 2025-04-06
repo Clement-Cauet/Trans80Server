@@ -22,7 +22,7 @@ public class RouteController {
         return this.service.getGtfsDao().getAllRoutes().stream().toList();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{routeId}")
     public Route getRouteById(@PathVariable String routeId) {
         return this.getAllRoutes().stream()
                 .filter(route -> route.getId().getId().equals(routeId))

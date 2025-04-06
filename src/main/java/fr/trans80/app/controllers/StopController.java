@@ -4,6 +4,7 @@ import fr.trans80.app.services.GtfsService;
 import lombok.RequiredArgsConstructor;
 import org.onebusaway.gtfs.model.Stop;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class StopController {
     }
 
     @GetMapping("/{stopId}")
-    public Stop getStopById(String stopId) {
+    public Stop getStopById(@PathVariable String stopId) {
         return this.getAllStops().stream()
                 .filter(stop -> stop.getId().getId().equals(stopId))
                 .findFirst()
