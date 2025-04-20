@@ -41,11 +41,12 @@ public class TripController {
     }
 
     @GetMapping("/{tripId}")
-    public List<Trip> getTripsByTripId(@PathVariable String tripId) {
+    public Trip getTripsByTripId(@PathVariable String tripId) {
 
         return this.service.getGtfsDao().getAllTrips().stream()
                 .filter(trip -> trip.getId().getId().equals(tripId))
-                .collect(Collectors.toList());
+                .findFirst()
+                .orElse(null);
     }
 
 }

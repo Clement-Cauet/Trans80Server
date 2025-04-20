@@ -24,6 +24,7 @@ public class UserHistory {
 
     private String user_id;
     private String trips_id;
-    private Date date;
+    private Date reserved_date;
+    private Date created_at;
 
 }
