@@ -37,6 +37,7 @@ public class TripController {
                 .filter(trip -> routeId == null || trip.getRoute().getId().getId().equals(routeId))
                 .filter(trip -> new DateService(calendarController).isDateTrip(date, trip.getServiceId().getId()))
                 .filter(trip -> directionId == null || trip.getDirectionId().equals(directionId))
+                .sorted((a, b) -> a.getTripShortName().compareToIgnoreCase(b.getTripShortName()))
                 .collect(Collectors.toList());
     }
 

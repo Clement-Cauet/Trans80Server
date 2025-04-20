@@ -19,7 +19,9 @@ public class StopController {
 
     @GetMapping
     public List<Stop> getAllStops() {
-        return this.service.getGtfsDao().getAllStops().stream().toList();
+        return this.service.getGtfsDao().getAllStops().stream()
+                .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+                .toList();
     }
 
     @GetMapping("/{stopId}")

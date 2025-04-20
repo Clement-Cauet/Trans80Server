@@ -20,23 +20,13 @@ public class RouteController {
             @RequestParam(value = "routeId", required = false) String routeId,
             @RequestParam(value = "stopId", required = false) String stopId) {
 
-        var gtfsDao = service.getGtfsDao();
-
-        Stream<Route> routeStream;
-
-        if (stopId != null) {
-            routeStream = gtfsDao.getAllStopTimes().stream()
-                    .filter(stopTime -> stopTime.getStop().getId().getId().equals(stopId))
-                    .map(stopTime -> stopTime.getTrip().getRoute());
-        } else {
-            routeStream = gtfsDao.getAllRoutes().stream();
-        }
-
-        if (routeId != null) {
-            routeStream = routeStream.filter(route -> route.getId().getId().equals(routeId));
-        }
-
-        return routeStream.distinct().toList();
+        return this.service.getGtfsDao().getAllRoutes().stream()
+                .filter(route -> routeId == null || route.getId().getId().equals(routeId))
+                .filter(route -> stopId == null || this.service.getGtfsDao().getAllStopTimes().stream()
+                        .anyMatch(stopTime -> stopTime.getStop().getId().getId().equals(stopId) &&
+                                stopTime.getTrip().getRoute().equals(route)))
+                .sorted((a, b) -> a.getId().getId().compareToIgnoreCase(b.getId().getId()))
+                .toList();
     }
 
 

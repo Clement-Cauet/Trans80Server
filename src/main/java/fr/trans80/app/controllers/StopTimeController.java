@@ -37,6 +37,7 @@ public class StopTimeController {
                 .filter(stopTime -> stopId == null || stopTime.getStop().getId().getId().equals(stopId))
                 .filter(stopTime -> new DateService(calendarController).isDateTrip(date, stopTime.getTrip().getServiceId().getId()))
                 .filter(stopTime -> directionId == null || stopTime.getTrip().getDirectionId().equals(directionId))
+                .sorted((a, b) -> a.getTrip().getTripShortName().compareToIgnoreCase(b.getTrip().getTripShortName()))
                 .collect(Collectors.toList());
     }
 }
