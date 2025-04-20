@@ -24,13 +24,8 @@ public class TripController {
     private final CalendarController calendarController;
 
     @GetMapping
-    public List<Trip> getAllTrips() {
-        return this.service.getGtfsDao().getAllTrips().stream().toList();
-    }
-
-    @GetMapping("/{routeId}")
-    public List<Trip> getTripsByRouteId(
-            @PathVariable String routeId,
+    public List<Trip> getAllTrips(
+            @RequestParam(value = "routeId", required = false) String routeId,
             @RequestParam(value = "date", required = false) String dateStr,
             @RequestParam(value = "directionId", required = false) String directionId) {
 
@@ -39,9 +34,17 @@ public class TripController {
                 : LocalDate.now();
 
         return this.service.getGtfsDao().getAllTrips().stream()
-                .filter(trip -> trip.getRoute().getId().getId().equals(routeId))
-                .filter(trip -> directionId == null || trip.getDirectionId().equals(directionId))
+                .filter(trip -> routeId == null || trip.getRoute().getId().getId().equals(routeId))
                 .filter(trip -> new DateService(calendarController).isDateTrip(date, trip.getServiceId().getId()))
+                .filter(trip -> directionId == null || trip.getDirectionId().equals(directionId))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{tripId}")
+    public List<Trip> getTripsByTripId(@PathVariable String tripId) {
+
+        return this.service.getGtfsDao().getAllTrips().stream()
+                .filter(trip -> trip.getId().getId().equals(tripId))
                 .collect(Collectors.toList());
     }
 
