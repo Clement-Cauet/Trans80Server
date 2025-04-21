@@ -1,12 +1,14 @@
 package fr.trans80.app.services;
 
 import fr.trans80.app.controllers.CalendarController;
+import fr.trans80.app.controllers.CalendarDateController;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.onebusaway.gtfs.model.ServiceCalendar;
+import org.onebusaway.gtfs.model.ServiceCalendarDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +25,21 @@ public class DateService {
 
     private final CalendarController calendarController;
     private final List<ServiceCalendar> calendars;
+    private final CalendarDateController calendarDateController;
+    private final List<ServiceCalendarDate> calendarDates;
+
 
     @Autowired
-    public DateService(CalendarController calendarController) {
+    public DateService(CalendarController calendarController, CalendarDateController calendarDateController) {
         this.calendarController = calendarController;
         this.calendars = calendarController.getAllCalendars();
+        this.calendarDateController = calendarDateController;
+        this.calendarDates = calendarDateController.getAllCalendarDates();
         if (this.calendars == null) {
             throw new IllegalStateException("Calendars list cannot be null");
+        }
+        if (this.calendarDates == null) {
+            throw new IllegalStateException("Calendar dates list cannot be null");
         }
     }
 
@@ -39,7 +49,19 @@ public class DateService {
                 .findFirst()
                 .orElse(null);
 
-        return calendar != null && isDateTripRange(date, calendar) && isDateTripDay(date, calendar);
+        if (calendar == null || !isDateTripRange(date, calendar)) {
+            return false;
+        }
+
+        boolean isTripDay = isDateTripDay(date, calendar);
+        Boolean exception = hasException(date, serviceId);
+        //Boolean exception = null;
+
+        if (isTripDay) {
+            return exception == null || exception;
+        } else {
+            return Boolean.TRUE.equals(exception);
+        }
     }
 
     private boolean isDateTripRange(LocalDate date, ServiceCalendar calendar) {
@@ -80,5 +102,19 @@ public class DateService {
 
         return false;
     }
+
+    private Boolean hasException(LocalDate date, String serviceId) {
+        return calendarDates.stream()
+                .filter(cd -> cd.getServiceId().getId().equals(serviceId) &&
+                        cd.getDate().getYear() == date.getYear() &&
+                        cd.getDate().getMonth() == date.getMonthValue() &&
+                        cd.getDate().getDay() == date.getDayOfMonth())
+                .map(ServiceCalendarDate::getExceptionType)
+                .sorted()
+                .reduce((first, second) -> second)
+                .map(type -> type == 1)
+                .orElse(null);
+    }
+
 
 }

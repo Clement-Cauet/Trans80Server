@@ -18,6 +18,7 @@ public class StopTimeController {
 
     private final GtfsService service;
     private final CalendarController calendarController;
+    private final CalendarDateController calendarDateController;
 
     @GetMapping
     public List<StopTime> getStopTimes(
@@ -35,9 +36,9 @@ public class StopTimeController {
                 .filter(stopTime -> tripId == null || stopTime.getTrip().getId().getId().equals(tripId))
                 .filter(stopTime -> routeId == null || stopTime.getTrip().getRoute().getId().getId().equals(routeId))
                 .filter(stopTime -> stopId == null || stopTime.getStop().getId().getId().equals(stopId))
-                .filter(stopTime -> new DateService(calendarController).isDateTrip(date, stopTime.getTrip().getServiceId().getId()))
+                .filter(stopTime -> new DateService(calendarController, calendarDateController).isDateTrip(date, stopTime.getTrip().getServiceId().getId()))
                 .filter(stopTime -> directionId == null || stopTime.getTrip().getDirectionId().equals(directionId))
                 .sorted((a, b) -> a.getTrip().getTripShortName().compareToIgnoreCase(b.getTrip().getTripShortName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

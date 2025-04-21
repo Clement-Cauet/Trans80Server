@@ -22,10 +22,12 @@ public class TripController {
 
     private final GtfsService service;
     private final CalendarController calendarController;
+    private final CalendarDateController calendarDateController;
 
     @GetMapping
     public List<Trip> getAllTrips(
             @RequestParam(value = "routeId", required = false) String routeId,
+            @RequestParam(value = "tripName", required = false) String tripName,
             @RequestParam(value = "date", required = false) String dateStr,
             @RequestParam(value = "directionId", required = false) String directionId) {
 
@@ -35,10 +37,11 @@ public class TripController {
 
         return this.service.getGtfsDao().getAllTrips().stream()
                 .filter(trip -> routeId == null || trip.getRoute().getId().getId().equals(routeId))
-                .filter(trip -> new DateService(calendarController).isDateTrip(date, trip.getServiceId().getId()))
+                .filter(trip -> tripName == null || trip.getTripShortName().equalsIgnoreCase(tripName))
+                .filter(trip -> new DateService(calendarController, calendarDateController).isDateTrip(date, trip.getServiceId().getId()))
                 .filter(trip -> directionId == null || trip.getDirectionId().equals(directionId))
                 .sorted((a, b) -> a.getTripShortName().compareToIgnoreCase(b.getTripShortName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/{tripId}")
