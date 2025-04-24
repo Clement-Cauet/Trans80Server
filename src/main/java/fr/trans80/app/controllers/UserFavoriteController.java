@@ -1,5 +1,6 @@
 package fr.trans80.app.controllers;
 
+import fr.trans80.app.exceptions.NotFoundException;
 import fr.trans80.app.models.UserFavorites;
 import fr.trans80.app.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class UserFavoriteController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserFavorites>> getUserFavorites(@AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<List<UserFavorites>> getUserFavorites(@AuthenticationPrincipal Jwt principal) throws NotFoundException {
         String userId = principal.getSubject();
         List<UserFavorites> favorites = userService.getUserFavoritesByUserId(userId);
         return ResponseEntity.ok(favorites);
@@ -33,7 +34,7 @@ public class UserFavoriteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserFavorite(@PathVariable("id") Long id, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<Void> deleteUserFavorite(@PathVariable("id") Long id) throws NotFoundException {
         userService.deleteUserFavorite(id);
         return ResponseEntity.noContent().build();
     }

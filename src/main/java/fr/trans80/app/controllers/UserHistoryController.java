@@ -1,5 +1,6 @@
 package fr.trans80.app.controllers;
 
+import fr.trans80.app.exceptions.NotFoundException;
 import fr.trans80.app.models.UserHistory;
 import fr.trans80.app.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class UserHistoryController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserHistory>> getUserHistory(@AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<List<UserHistory>> getUserHistory(@AuthenticationPrincipal Jwt principal) throws NotFoundException {
         String userId = principal.getSubject();
         List<UserHistory> history = userService.getUserHistoryByUserId(userId);
         return ResponseEntity.ok(history);
@@ -33,7 +34,7 @@ public class UserHistoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserHistory(@PathVariable("id") Long id, @AuthenticationPrincipal Jwt principal) {
+    public ResponseEntity<Void> deleteUserHistory(@PathVariable("id") Long id) throws NotFoundException {
         userService.deleteUserHistory(id);
         return ResponseEntity.noContent().build();
     }
